@@ -23,7 +23,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Iterable, Optional, Set, Type, Union
+from typing import Any, Iterable, Optional, Set, Type, Union
 
 from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny, model_validator
 
@@ -139,6 +139,7 @@ class Role(BaseRole, SerializationMixin, ContextMixin, BaseModel):
 
     role_id: str = ""
     states: list[str] = []
+    llm_config: Optional[Any] = Field(default=None, exclude=True)
 
     # scenarios to set action system_prompt:
     #   1. `__init__` while using Role(actions=[...])
@@ -167,7 +168,10 @@ class Role(BaseRole, SerializationMixin, ContextMixin, BaseModel):
         kwargs = self.model_extra or {}
 
         if self.is_human:
-            self.llm = HumanProvider(None)
+            from metagpt.config2 import config
+
+            llm_config = self.llm_config if self.llm_config else config.llm
+            self.llm = HumanProvider(llm_config)
 
         self._check_actions()
         self.llm.system_prompt = self._get_prefix()
