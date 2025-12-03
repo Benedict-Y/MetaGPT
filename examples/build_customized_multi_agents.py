@@ -23,7 +23,10 @@ def parse_code(rsp):
 
 class SimpleWriteCode(Action):
     PROMPT_TEMPLATE: str = """
-    Write a python function that can {instruction}.
+    Write a python function that satisfies the following requirement:
+    {instruction}
+    
+    If this is a modification request, please rewrite the function accordingly.
     Return ```python your_code_here ``` with NO other texts,
     your code:
     """
@@ -45,7 +48,7 @@ class SimpleCoder(Role):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._watch([UserRequirement])
+        self._watch([UserRequirement, SimpleWriteReview])
         self.set_actions([SimpleWriteCode])
 
 
@@ -126,7 +129,7 @@ async def main(
 ):
     logger.info(idea)
 
-    team = Team()
+    team = Team(use_mgx=False)
     team.hire(
         [
             SimpleCoder(),
