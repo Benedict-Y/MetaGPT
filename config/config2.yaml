@@ -6,3 +6,9 @@ llm:
   model: "CoF-rl-model-7b"
   base_url: "http://localhost:8005/v1"
   api_key: "EMPTY"
+  # Reproducibility / stability
+  # - For OpenAI-compatible backends (e.g., vLLM), temperature=0 and a fixed seed usually reduces variance.
+  # - Note: full determinism is not guaranteed on GPU backends.
+  temperature: 0.0
+  top_p: 1.0
+  # seed: 42
