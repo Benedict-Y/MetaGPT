@@ -142,9 +142,12 @@ class OpenAILLM(BaseLLM):
             # "n": 1,  # Some services do not provide this parameter, such as mistral
             # "stop": None,  # default it's None and gpt4-v can't have this one
             "temperature": self.config.temperature,
+            "top_p": self.config.top_p,
             "model": self.model,
             "timeout": self.get_timeout(timeout),
         }
+        if self.config.seed is not None:
+            kwargs["seed"] = self.config.seed
         if "o1-" in self.model:
             # compatible to openai o1-series
             kwargs["temperature"] = 1
